@@ -10,6 +10,7 @@ import numpy as np
 import argparse
 import sys
 
+
 def find_ps_sites(alignment, seq, remove_fq, epis_base):
     rm_pis = []
     all_pis = []
@@ -127,11 +128,16 @@ def write_pis(alignment, all_pis, pos_fa):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--inpath', dest='inpath', help="input file path", required=True)
-    parser.add_argument('-m', '--ma', dest='ma', help="input multiple alignment result file", required=True)
-    parser.add_argument('-b', '--base', dest='base', help="Number of effective bases, none if unknown", required=True)
-    parser.add_argument('-r', '--remove', dest='remove', help="pis frequence cutoff of remove genomes, none if unknown, 0 if remove all non-A,T,C,G bases", required=True)
-    parser.add_argument('-f', '--reference', dest='reference', help="id of reference sequence in the multiple alignment result file", required=True)
+    parser.add_argument('-i', '--inpath', dest='inpath',
+                        help="input file path", required=True)
+    parser.add_argument('-m', '--ma', dest='ma',
+                        help="input multiple alignment result file", required=True)
+    parser.add_argument('-b', '--base', dest='base',
+                        help="Number of effective bases, none if unknown", required=True)
+    parser.add_argument('-r', '--remove', dest='remove',
+                        help="pis frequence cutoff of remove genomes, none if unknown, 0 if remove all non-A,T,C,G bases", required=True)
+    parser.add_argument('-f', '--reference', dest='reference',
+                        help="id of reference sequence in the multiple alignment result file", required=True)
     args = parser.parse_args()
 
     if args.inpath[-1] != '/':
@@ -147,7 +153,7 @@ if __name__ == '__main__':
 
     freq_out = open(inpath + 'freq_all.txt', 'w')
     pos_out = open(inpath + 'pi_pos_all.fasta', 'w')
-)
+
     if args.base == 'none':
         base = int(len(align)*0.8)
     else:
@@ -172,16 +178,19 @@ if __name__ == '__main__':
     all_sites = []
     rm_sites = []
     if os.path.exists(inpath + "rm_non-ATCG_genomes.ma") and os.path.getsize(inpath + "rm_non-ATCG_genomes.ma"):
-        alignments_filtered = AlignIO.read(inpath + "rm_non-ATCG_genomes.ma", "fasta")
+        alignments_filtered = AlignIO.read(
+            inpath + "rm_non-ATCG_genomes.ma", "fasta")
         all_sites, rm_sites = find_ps_sites(align, ref_seq, remove, base)
-        alignments_filtered = AlignIO.read(inpath + "rm_non-ATCG_genomes.ma", "fasta")
+        alignments_filtered = AlignIO.read(
+            inpath + "rm_non-ATCG_genomes.ma", "fasta")
 
     else:
         all_sites, rm_sites = find_ps_sites(align, ref_seq, remove, base)
         filter_file = open(inpath + "rm_non-ATCG_genomes.ma", "w")
         rm_N_list(align, rm_sites, filter_file)
         filter_file.close()
-        alignments_filtered = AlignIO.read(inpath + "rm_non-ATCG_genomes.ma", "fasta")
+        alignments_filtered = AlignIO.read(
+            inpath + "rm_non-ATCG_genomes.ma", "fasta")
 
     base_filtered = int(len(alignments_filtered)*0.8)
     freq_out.write("reference")
